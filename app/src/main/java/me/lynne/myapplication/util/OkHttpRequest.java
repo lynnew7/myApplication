@@ -4,9 +4,11 @@ package me.lynne.myapplication.util;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.io.IOException;
@@ -67,12 +69,21 @@ public class OkHttpRequest {
         }
 
         private void setView(JSONArray jsonArray){
-
-            String url = jsonArray.getJSONObject(0).getString("url");
-            Log.d("test", "onResponse: " + url);
+            JSONObject jsonObject = jsonArray.getJSONObject(0);
+            String url = jsonObject.getString("url");
+            String title = jsonObject.getString("title");
+            String copyright = jsonObject.getString("copyright");
+            if(title.equals("")){
+                title = copyright;
+            }
             Uri uri =  Uri.parse("https://www.bing.com" + url);
             SimpleDraweeView draweeView = view.findViewById(R.id.image_view);
             draweeView.setImageURI(uri);
+            TextView titleView = view.findViewById(R.id.title);
+            titleView.setText(title);
+            TextView copyRightView = view.findViewById(R.id.copyright);
+            copyRightView.setText(copyright);
+
         }
     }
 }
