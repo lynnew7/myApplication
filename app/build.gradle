@@ -45,4 +45,5 @@ dependencies {
     implementation 'com.facebook.fresco:imagepipeline-okhttp3:2.2.0'
     implementation 'com.facebook.fresco:fresco:2.2.0'
     implementation 'com.alibaba:fastjson:1.1.71.android'
+    implementation 'org.jetbrains:annotations-java5:15.0'
 }

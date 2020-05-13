@@ -14,7 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import me.lynne.myapplication.util.FrescoUitl;
+import me.lynne.myapplication.util.JsonArrayContent;
 import me.lynne.myapplication.util.OkHttpRequest;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,14 +26,13 @@ public class MainActivity extends AppCompatActivity {
     final private String Tag = "tst";
     private boolean issuance = true;
     private boolean memuShow = false;
-    private Context context = this;
-
-
+    JsonArrayContent jsonArrayContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fresco.initialize(this);
+        final FrescoUitl frescoUitl = new FrescoUitl(this);
+        frescoUitl.frescoInit();
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         setContentView(R.layout.activity_main);
@@ -40,10 +43,17 @@ public class MainActivity extends AppCompatActivity {
                 totalMemu();
             }
         });
+
+        jsonArrayContent = new JsonArrayContent(getDiskCacheDir());
         findViewById(R.id.saveimage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                totalMemu();
+                Log.d("saveimage", "tt");
+                String url = jsonArrayContent.getJsonArray().getJSONObject(0).getString("url");
+                Log.i("test", url);
+                String name = url.substring(7).split("&")[0];
+                Log.i("test", name);
+                frescoUitl.saveImageFromUrlThread("https://www.bing.com" + url, name);
             }
         });
         findViewById(R.id.setlockscreen_and_home).setOnClickListener(new View.OnClickListener() {
@@ -68,10 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         String url = "https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8&mkt=zh-CN";
 
-        String Tag = "test";
-        String path = getDiskCacheDir();
-        Log.d(Tag, "onCreate: "+ path);
-        OkHttpRequest okHttpRequest = new OkHttpRequest(path);
+        OkHttpRequest okHttpRequest = new OkHttpRequest(jsonArrayContent);
         okHttpRequest.getResponse(url, okHttpRequest.callback(findViewById(R.id.parent)));
 
     }

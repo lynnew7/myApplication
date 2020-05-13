@@ -23,9 +23,11 @@ import okhttp3.Response;
 public class OkHttpRequest {
 
     private JsonCache jsonCache;
+    private JsonArrayContent jsonArrayContent;
 
-    public OkHttpRequest(String path) {
-        jsonCache = new JsonCache(path);
+    public OkHttpRequest(JsonArrayContent jsonArrayContent) {
+        this.jsonArrayContent = jsonArrayContent;
+        jsonCache = jsonArrayContent.getJsonCache();
     }
 
     public MyCallBack callback(View view) {
@@ -34,8 +36,8 @@ public class OkHttpRequest {
 
     public void getResponse(String url, MyCallBack callback) {
         if( jsonCache.checkCache() ) {
-            String res = jsonCache.getCacheContent();
-            JSONArray jsonArray = JSON.parseArray(res);
+//            String res = jsonCache.getCacheContent();
+            JSONArray jsonArray = jsonArrayContent.getJsonArray();
             callback.setView(jsonArray);
             return;
         }
@@ -64,6 +66,7 @@ public class OkHttpRequest {
         public void onResponse(Call call, Response response) throws IOException {
             String res = response.body().string();
             JSONArray jsonArray = JSON.parseObject(res).getJSONArray("images");
+
             jsonCache.updateJsonCache(jsonArray.toString());
             setView(jsonArray);
         }
